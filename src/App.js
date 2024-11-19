@@ -112,12 +112,7 @@ function ItemList({ items, setItems }) {
 
       <AnimatePresence>
         {items.map((item, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          <motion.div key={index} exit={{ opacity: 0 }}>
             <ItemRow
               key={index}
               item={item}

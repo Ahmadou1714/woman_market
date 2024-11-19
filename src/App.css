@@ -1,38 +1,152 @@
-.App {
+.shopping-list-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.header {
   text-align: center;
+  margin-bottom: 30px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.header h1 {
+  color: #2c3e50;
+  font-size: 2em;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.add-item-section {
   display: flex;
-  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.input-field {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.add-button {
+  padding: 8px 16px;
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-button:hover {
+  background-color: #27ae60;
+}
+
+.items-container {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.items-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
+  background-color: #f5f6fa;
+  padding: 12px;
+  font-weight: bold;
+  border-bottom: 2px solid #ddd;
+}
+
+.item-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  align-items: center;
+}
+
+.item-row:last-child {
+  border-bottom: none;
+}
+
+.col-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-button,
+.delete-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+.edit-button {
+  background-color: #3498db;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.edit-button:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+  padding: 8px;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
+}
+
+.summary-section {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f5f6fa;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.total-items,
+.total-price {
+  font-weight: bold;
+}
+
+.total-items span,
+.total-price span {
+  color: #2c3e50;
+}
+
+@media (max-width: 600px) {
+  .add-item-section {
+    flex-direction: column;
   }
-  to {
-    transform: rotate(360deg);
+
+  .items-header,
+  .item-row {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .col-total,
+  .col-actions {
+    display: none;
+  }
+
+  .summary-section {
+    flex-direction: column;
+    gap: 10px;
   }
 }

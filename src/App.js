@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { Edit3Icon, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import './App.css';
@@ -108,13 +109,23 @@ function ItemList({ items, setItems }) {
         <span className="col-total">Total</span>
         <span className="col-actions">Actions</span>
       </div>
-      {items.map((item, index) => (
-        <ItemRow
-          key={index}
-          item={item}
-          onDelete={() => handleDeleteItem(index)}
-        />
-      ))}
+
+      <AnimatePresence>
+        {items.map((item, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <ItemRow
+              key={index}
+              item={item}
+              onDelete={() => handleDeleteItem(index)}
+            />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }

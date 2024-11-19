@@ -56,9 +56,9 @@ function AddItemForm({ setItems }) {
   const handleAddItem = () => {
     const newItem = {
       produit,
-      quantite: parseInt(quantite, 10),
-      prix: parseFloat(prix),
-      total: parseInt(quantite, 10) * parseFloat(prix),
+      quantite: +quantite,
+      prix: +prix,
+      total: +quantite * +prix,
     };
     setItems((prev) => [...prev, newItem]);
     resetItem();
@@ -96,7 +96,7 @@ function AddItemForm({ setItems }) {
 
 function ItemList({ items, setItems }) {
   const handleDeleteItem = (index) => {
-    setItems((prev) => prev.filter((_, id) => id !== index));
+    setItems((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -139,13 +139,13 @@ function ItemRow({ item, onDelete }) {
 }
 
 function Summary({ items }) {
-  const totalQuantity = items.reduce((acc, curr) => acc + curr.quantite, 0);
+  const totalArticle = items.length;
   const totalPrice = items.reduce((acc, curr) => acc + curr.total, 0);
 
   return (
     <div className="summary-section">
       <div className="total-items">
-        Nombre total d'articles: <span>{totalQuantity}</span>
+        Nombre total d'articles: <span>{totalArticle}</span>
       </div>
       <div className="total-price">
         Prix total: <span>{totalPrice} €</span>

@@ -20,6 +20,7 @@ const initialItems = [
 
 function ShoppingList() {
   const [items, setItems] = useState(initialItems);
+  const [editItem, setEditItem] = useState({});
 
   return (
     <AnimatePresence>
@@ -34,7 +35,12 @@ function ShoppingList() {
           <AddItemForm setItems={setItems} />
 
           <div className="items-container">
-            <ItemList items={items} setItems={setItems} />
+            <ItemList
+              items={items}
+              setItems={setItems}
+              editItem={editItem}
+              setEditItem={setEditItem}
+            />
           </div>
           <Summary items={items} />
         </div>
@@ -105,14 +111,26 @@ function AddItemForm({ setItems }) {
   );
 }
 
-function ItemList({ items, setItems }) {
+function ItemList({ items, setItems, editItem, setEditItem }) {
   const handleDeleteItem = (index) => {
     setItems((prevItems) => prevItems.filter((_, i) => i !== index));
   };
 
-  const handleEditItem = (item) => {
-    setItems((prevItems) => prevItems.filter((i) => i !== item));
-    console.log(item);
+  const handleEditItem = (produit, quantite, prix) => {
+    const updateItem = setItems((prevItems) =>
+      prevItems.map((item) => {
+        if (item.produit === produit) {
+          return {
+            ...item,
+            quantite: quantite,
+            prix: prix,
+            total: quantite * prix,
+          };
+        }
+        return item;
+      }),
+    );
+    setEditItem(updateItem);
   };
 
   return (

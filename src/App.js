@@ -18,7 +18,7 @@ const initialItems = [
   },
 ];
 
-const ShoppingList = () => {
+function ShoppingList() {
   const [items, setItems] = useState(initialItems);
 
   return (
@@ -32,6 +32,7 @@ const ShoppingList = () => {
         <div className="shopping-list-container">
           <Header />
           <AddItemForm setItems={setItems} />
+
           <div className="items-container">
             <ItemList items={items} setItems={setItems} />
           </div>
@@ -40,7 +41,7 @@ const ShoppingList = () => {
       </motion.div>
     </AnimatePresence>
   );
-};
+}
 
 export default ShoppingList;
 
@@ -66,9 +67,9 @@ function AddItemForm({ setItems }) {
   const handleAddItem = () => {
     const newItem = {
       produit,
-      quantite: +quantite,
-      prix: +prix,
-      total: +quantite * +prix,
+      quantite: parseInt(quantite),
+      prix: parseFloat(prix),
+      total: parseInt(quantite) * parseFloat(prix),
     };
     setItems((prev) => [...prev, newItem]);
     resetItem();
@@ -97,7 +98,7 @@ function AddItemForm({ setItems }) {
         value={prix}
         onChange={(e) => setPrix(e.target.value)}
       />
-      <button className="add-button" onClick={handleAddItem}>
+      <button type="submit" className="add-button" onClick={handleAddItem}>
         Ajouter à la liste
       </button>
     </div>
@@ -106,10 +107,13 @@ function AddItemForm({ setItems }) {
 
 function ItemList({ items, setItems }) {
   const handleDeleteItem = (index) => {
-    setItems((prev) => prev.filter((_, i) => i !== index));
+    setItems((prevItems) => prevItems.filter((_, i) => i !== index));
   };
 
-  const handleEditItem = function () {};
+  const handleEditItem = (item) => {
+    setItems((prevItems) => prevItems.filter((i) => i !== item));
+    console.log(item);
+  };
 
   return (
     <div>
@@ -128,7 +132,7 @@ function ItemList({ items, setItems }) {
               key={index}
               item={item}
               onDelete={() => handleDeleteItem(index)}
-              onEdit={() => handleEditItem(index)}
+              onEdit={(e) => handleEditItem(item)}
             />
           </motion.div>
         ))}

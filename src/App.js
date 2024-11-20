@@ -145,7 +145,7 @@ function ItemRow({ item, onDelete }) {
 }
 
 function Summary({ items }) {
-  const totalArticle = items.length;
+  const totalArticle = items.reduce((acc, curr) => acc + curr.quantite, 0);
   const totalPrice = items.reduce((acc, curr) => acc + curr.total, 0);
 
   return (

@@ -22,14 +22,23 @@ const ShoppingList = () => {
   const [items, setItems] = useState(initialItems);
 
   return (
-    <div className="shopping-list-container">
-      <Header />
-      <AddItemForm setItems={setItems} />
-      <div className="items-container">
-        <ItemList items={items} setItems={setItems} />
-      </div>
-      <Summary items={items} />
-    </div>
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 50 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="shopping-list-container">
+          <Header />
+          <AddItemForm setItems={setItems} />
+          <div className="items-container">
+            <ItemList items={items} setItems={setItems} />
+          </div>
+          <Summary items={items} />
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
@@ -100,6 +109,8 @@ function ItemList({ items, setItems }) {
     setItems((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleEditItem = function () {};
+
   return (
     <div>
       <div className="items-header">
@@ -117,6 +128,7 @@ function ItemList({ items, setItems }) {
               key={index}
               item={item}
               onDelete={() => handleDeleteItem(index)}
+              onEdit={() => handleEditItem(index)}
             />
           </motion.div>
         ))}
@@ -125,7 +137,7 @@ function ItemList({ items, setItems }) {
   );
 }
 
-function ItemRow({ item, onDelete }) {
+function ItemRow({ item, onDelete, onEdit }) {
   return (
     <div className="item-row">
       <span className="col-name">{item.produit}</span>
@@ -134,7 +146,7 @@ function ItemRow({ item, onDelete }) {
       <span className="col-total">{item.total} €</span>
       <div className="col-actions">
         <button className="edit-button">
-          <Edit3Icon size={16} />
+          <Edit3Icon size={16} onClick={onEdit} />
         </button>
         <button className="delete-button" onClick={onDelete}>
           <Trash2 size={16} />

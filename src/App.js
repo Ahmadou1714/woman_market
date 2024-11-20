@@ -20,7 +20,52 @@ const initialItems = [
 
 function ShoppingList() {
   const [items, setItems] = useState(initialItems);
-  const [editItem, setEditItem] = useState({});
+  const [editItemIndex, setEditItemIndex] = useState(null);
+  const [formState, setFormState] = useState({
+    produit: '',
+    quantite: 0,
+    prix: 0,
+  });
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormState((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddOrEditItem = () => {
+    const newItem = {
+      ...formState,
+      quantite: parseInt(formState.quantite),
+      prix: parseFloat(formState.prix),
+      total: parseInt(formState.quantite) * parseFloat(formState.prix),
+    };
+
+    if (editItemIndex) {
+      setItems((prevItems) =>
+        prevItems.map((item, index) =>
+          index === editItemIndex ? newItem : item,
+        ),
+      );
+      setEditItemIndex(null);
+    } else {
+      setItems((prevItems) => [...prevItems, newItem]);
+    }
+
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setFormState({ produit: '', quantite: 0, prix: 0 });
+  };
+
+  const handleEdit = (item, index) => {
+    setFormState(item);
+    setEditItemIndex(index);
+  };
+
+  const handleDelete = (index) => {
+    setItems((prevItems) => prevItems.filter((_, i) => i !== index));
+  };
 
   return (
     <AnimatePresence>
@@ -32,16 +77,13 @@ function ShoppingList() {
       >
         <div className="shopping-list-container">
           <Header />
-          <AddItemForm setItems={setItems} />
-
-          <div className="items-container">
-            <ItemList
-              items={items}
-              setItems={setItems}
-              editItem={editItem}
-              setEditItem={setEditItem}
-            />
-          </div>
+          <AddItemForm
+            formState={formState}
+            handleFormChange={handleFormChange}
+            handleAddOrEditItem={handleAddOrEditItem}
+            isEditing={editItemIndex !== null}
+          />
+          <ItemList items={items} onEdit={handleEdit} onDelete={handleDelete} />
           <Summary items={items} />
         </div>
       </motion.div>
@@ -59,80 +101,50 @@ function Header() {
   );
 }
 
-function AddItemForm({ setItems }) {
-  const [produit, setProduit] = useState('');
-  const [quantite, setQuantite] = useState(0);
-  const [prix, setPrix] = useState(0);
-
-  function resetItem() {
-    setProduit('');
-    setQuantite(0);
-    setPrix(0);
-  }
-
-  const handleAddItem = () => {
-    const newItem = {
-      produit,
-      quantite: parseInt(quantite),
-      prix: parseFloat(prix),
-      total: parseInt(quantite) * parseFloat(prix),
-    };
-    setItems((prev) => [...prev, newItem]);
-    resetItem();
-  };
-
+function AddItemForm({
+  formState,
+  handleFormChange,
+  handleAddOrEditItem,
+  isEditing,
+}) {
   return (
     <div className="add-item-section">
       <input
         type="text"
+        name="produit"
         placeholder="Nom du produit"
         className="input-field"
-        value={produit}
-        onChange={(e) => setProduit(e.target.value)}
+        value={formState.produit}
+        onChange={handleFormChange}
       />
       <input
         type="number"
+        name="quantite"
         placeholder="Quantité"
         className="input-field"
-        value={quantite}
-        onChange={(e) => setQuantite(e.target.value)}
+        value={formState.quantite}
+        onChange={handleFormChange}
       />
       <input
         type="number"
+        name="prix"
         placeholder="Prix unitaire (€)"
         className="input-field"
-        value={prix}
-        onChange={(e) => setPrix(e.target.value)}
+        value={formState.prix}
+        onChange={handleFormChange}
       />
-      <button type="submit" className="add-button" onClick={handleAddItem}>
-        Ajouter à la liste
+      <button
+        type="submit"
+        className="add-button"
+        onClick={handleAddOrEditItem}
+      >
+        {isEditing ? 'Modifier' : 'Ajouter à la liste'}
       </button>
     </div>
   );
 }
 
-function ItemList({ items, setItems, editItem, setEditItem }) {
-  const handleDeleteItem = (index) => {
-    setItems((prevItems) => prevItems.filter((_, i) => i !== index));
-  };
-
-  const handleEditItem = (produit, quantite, prix) => {
-    const updateItem = setItems((prevItems) =>
-      prevItems.map((item) => {
-        if (item.produit === produit) {
-          return {
-            ...item,
-            quantite: quantite,
-            prix: prix,
-            total: quantite * prix,
-          };
-        }
-        return item;
-      }),
-    );
-    setEditItem(updateItem);
-  };
-
+function ItemList({ items, onEdit, onDelete }) {
   return (
     <div>
       <div className="items-header">
@@ -147,10 +159,9 @@ function ItemList({ items, setItems, editItem, setEditItem }) {
         {items.map((item, index) => (
           <motion.div key={index} exit={{ opacity: 0 }}>
             <ItemRow
-              key={index}
               item={item}
-              onDelete={() => handleDeleteItem(index)}
-              onEdit={(e) => handleEditItem(item)}
+              onEdit={() => onEdit(item, index)}
+              onDelete={() => onDelete(index)}
             />
           </motion.div>
         ))}
@@ -159,7 +170,7 @@ function ItemList({ items, setItems, editItem, setEditItem }) {
   );
 }
 
-function ItemRow({ item, onDelete, onEdit }) {
+function ItemRow({ item, onEdit, onDelete }) {
   return (
     <div className="item-row">
       <span className="col-name">{item.produit}</span>
@@ -167,8 +178,8 @@ function ItemRow({ item, onDelete, onEdit }) {
       <span className="col-price">{item.prix} €</span>
       <span className="col-total">{item.total} €</span>
       <div className="col-actions">
-        <button className="edit-button">
-          <Edit3Icon size={16} onClick={onEdit} />
+        <button className="edit-button" onClick={onEdit}>
+          <Edit3Icon size={16} />
         </button>
         <button className="delete-button" onClick={onDelete}>
           <Trash2 size={16} />
